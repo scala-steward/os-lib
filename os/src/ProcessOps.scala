@@ -647,7 +647,8 @@ object ProcessOps {
     addToProcessEnv(env)
 
     val dir = Option(cwd).getOrElse(os.pwd)
-    builder.directory(dir.toIO)
+    // `.directory` doesn't work well with relative paths with `..` in them so force it absolute
+    builder.directory(dir.wrapped.toAbsolutePath.toFile)
     spawnHook.value.apply(dir)
 
     builder
